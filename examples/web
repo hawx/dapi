@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/dapi'
+
+require 'redcarpet'
+require 'sinatra'
+require 'sass'
+require 'slim'
+
+if ARGV.empty?
+  abort "Usage: dapi_web <input.dapi>"
+end
+
+$path = ARGV.first
+
+opts = {
+  no_intra_emphasis: true,
+  fenced_code_blocks: true,
+  disable_indented_code_blocks: true,
+  strikethrough: true,
+  space_after_headers: true
+}
+
+Markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, opts)
+
+set :views, File.join(File.dirname(__FILE__), '_assets')
+
+get '/' do
+  slim :index, locals: {
+    dapi: Dapi.load($path)
+  }
+end
+
+get '/styles.css' do
+  sass :styles
+end

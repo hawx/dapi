@@ -1,0 +1,165 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,700)
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700)
+
+$text-font: 'Ubuntu'
+$code-font: 'Ubuntu Mono'
+
+$base-unit: 16px
+$unit: 21px
+$width: 40 * $base-unit
+
+body
+  font-size: $base-unit
+  font-family: $text-font
+  line-height: $unit
+  max-width: $width
+  margin: (2 * $unit) auto
+
+body > header
+  margin-bottom: 3 * $unit
+
+.endpoints
+  list-style: none
+  padding-left: 0
+
+.endpoint
+  margin-bottom: 3 * $unit
+
+.endpoint header
+  $segment: 360 / 5
+  $offset: -10
+  $saturation: 70
+  $lightness: 50
+
+  &.verb-get h1
+    background: hsl(2 * $segment + $offset, $saturation, $lightness)
+
+  &.verb-put h1
+    background: hsl(1 * $segment + $offset, $saturation, $lightness)
+
+  &.verb-post h1
+    background: hsl(3 * $segment + $offset, $saturation, $lightness)
+
+  &.verb-patch h1
+    background: hsl(4 * $segment + $offset, $saturation, $lightness)
+
+  &.verb-delete h1
+    background: hsl(0 * $segment + $offset, $saturation, $lightness)
+
+  h1
+    font-family: $code-font
+    font-size: 1.5 * $base-unit
+    background: #ccc
+    padding: $unit (1.5 * $base-unit)
+    margin-left: -1.5 * $base-unit
+    width: $width + (1.5 * $base-unit)
+    margin-bottom: 1 * $unit
+
+    .verb
+      border-right: 1px solid rgba(0, 0, 0, 0.3)
+      padding-right: $unit
+
+    .url
+      padding-left: $unit
+
+.description
+  margin-top: $unit
+  font-size: 1.1 * $base-unit
+
+.collapsed
+  margin: 0
+
+  .content
+    display: none
+
+h3
+  margin: (1.5 * $unit) 0 (0.5 * $unit)
+  margin-left: -1 * $base-unit
+
+h2
+  margin: (1.5 * $unit) 0 (1.5 * $unit)
+  margin-left: -1 * $base-unit
+
+code
+  font: $base-unit $code-font
+
+pre
+  padding: $unit
+  background: #eee
+  outline: 1px solid #ddd
+  overflow-x: auto
+
+.parameters, .headers
+  dt
+    font-family: $code-font
+    font-weight: bold
+
+    &.optional:after
+      content: ' (optional)'
+      color: #666
+
+  dd
+    margin-left: $unit
+    margin-bottom: $unit
+
+    p
+      margin: (0.5 * $unit) 0
+
+
+.responses
+  list-style: none
+  padding-left: 0
+
+  .response
+    margin-bottom: $unit
+
+  .code
+    position: absolute
+    font-family: $code-font
+    font-weight: bold
+    background: #ccc
+    padding: 0.5 * $base-unit
+    margin-right: $base-unit
+
+    $segment: 360 / 5
+    $offset: -30
+    $saturation: 37
+    $lightness: 63
+
+    &.code-1
+      background: hsl(4 * $segment + $offset, $saturation, $lightness)
+
+    &.code-2
+      background: hsl(2 * $segment + $offset, $saturation, $lightness)
+
+    &.code-3
+      background: hsl(3 * $segment + $offset, $saturation, $lightness)
+
+    &.code-4
+      background: hsl(5 * $segment + $offset, $saturation, $lightness)
+
+    &.code-5
+      background: hsl(1 * $segment + $offset, $saturation, $lightness)
+
+  .reason
+    margin-left: 3 * $unit
+
+    p:first-child
+      padding-top: 0.5 * $base-unit
+
+    pre
+      margin-bottom: 2 * $unit
+
+
+.rainbow
+  .operator
+    color: hsl(0, 0, 50)
+
+  .tag
+    color: hsl(220, 50, 20)
+
+  .string
+    color: hsl(220, 50, 50)
+
+  .attribute
+    color: hsl(220, 50, 20)

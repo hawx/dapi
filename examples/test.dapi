@@ -1,0 +1,220 @@
+auth_header = ['WWW-Authenticate',
+               'Basic authentication, see [Authentication](http://example.com)']
+
+title 'Box REST API'
+
+description <<EOS
+This is the REST API for interacting with boxes.
+EOS
+
+endpoint '/box' do
+  method 'get' do
+    description 'List of boxes for the user'
+
+    request do
+      parameter 'useless=(true|false)', <<EOS
+This parameter exists purely to test _longer_ descriptions.
+
+This one should take up a couple of paragraphs. Maybe even put a list in to show
+what scenarios can happen:
+
+- scenario 1
+- or two
+- maybe 3
+EOS
+
+      parameter 'name={searchTerm}',
+                'Return boxes with names matching `{searchTerm}`',
+                optional: true
+
+      parameter 'size={int}',
+                'Return boxes with the given size',
+                optional: true
+
+      # auth (allow helper methods?)
+      header *auth_header
+    end
+
+    response 100 do
+      reason <<EOS
+I want to see what happens if I do a long reason, like over a multitude of
+lines, maybe with some __markdown__ for good measure.
+
+Like really what happens?
+
+Really?
+EOS
+    end
+
+    response 200 do
+      reason 'OK'
+      body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<boxes>
+  <box id="1">
+    <name>Toys</name>
+    <size>10</size>
+  </box>
+  <box id="2">
+    <name>Weapons</name>
+    <size>15</size>
+  </box>
+</boxes>
+EOS
+    end
+
+    response 301 do
+      reason 'I want to see the colour'
+    end
+
+    response 401 do
+      reason 'Missing basic authentication'
+    end
+
+    response 500 do
+      reason 'I want to see the colour!'
+    end
+  end
+
+  method 'post' do
+    description "Create a new box"
+
+    request do
+      header *auth_header
+
+      body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<box>
+  <name>Stuff</name>
+</box>
+EOS
+    end
+
+    response 201 do
+      reason 'Returns the newly created box'
+         body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<box id="3">
+  <name>Stuff</name>
+  <size>0</size>
+</box>
+EOS
+    end
+
+    response 400 do
+      reason 'Request was missing a required field or a field was invalid'
+    end
+
+    response 401 do
+      reason 'Missing basic authentication'
+    end
+  end
+end
+
+endpoint '/box/{id}' do
+  method 'get' do
+    description 'Get the box {id}'
+
+    request do
+      header *auth_header
+    end
+
+    response 200 do
+      reason 'OK'
+      body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<box id="1">
+  <name>Toys</name>
+  <size>10</size>
+</box>
+EOS
+    end
+
+    response 401 do
+      reason 'Missing basic authentication'
+    end
+  end
+
+  method 'put' do
+    description 'Replace the box `{id}`'
+
+    request do
+      header *auth_header
+
+      body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<box>
+  <name>Toys</name>
+</box>
+EOS
+    end
+
+    response 200 do
+      reason 'OK'
+      body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<box id="1">
+  <name>Toys</name>
+  <size>10</size>
+</box>
+EOS
+    end
+
+    response 401 do
+      reason 'Missing basic authentication'
+    end
+  end
+
+  method 'patch' do
+    description 'Update the box `{id}`'
+
+    request do
+      header *auth_header
+
+      body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<box>
+  <name>Toys</name>
+</box>
+EOS
+    end
+
+    response 200 do
+      reason 'OK'
+      body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<box id="1">
+  <name>Toys</name>
+  <size>10</size>
+</box>
+EOS
+    end
+
+    response 401 do
+      reason 'Missing basic authentication'
+    end
+  end
+
+  method 'delete' do
+    description 'Delete the box `{id}`'
+
+    request do
+      header *auth_header
+    end
+
+    response 200 do
+      reason 'OK'
+      body <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<box id="1">
+  <name>Toys</name>
+  <size>10</size>
+</box>
+EOS
+    end
+
+    response 401 do
+      reason 'Missing basic authentication'
+    end
+  end
+end

@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/dapi'
+
+def write(endpoints)
+  endpoints.each do |endpoint|
+    endpoint.methods.each do |method|
+      puts method.verb + " " + endpoint.url
+      puts "  " +  method.description
+
+      puts "", "  Parameters:"
+      method.request.parameters.each do |param|
+        puts "  - " + param.name + (param.opts[:optional] ? " (optional)" : "")
+        puts "      " + param.description
+      end
+
+      puts "", "  Headers:"
+      method.request.headers.each do |header|
+        puts "  - " + header.name
+        puts "      " + header.description
+      end
+
+      puts "", "  Responses:"
+      method.responses.each do |response|
+        print "    " + response.code.to_s
+        puts " " + (response.reason ? "- " + response.reason : "")
+
+        if response.body
+          response.body.each_line do |line|
+            puts "      " + line
+          end
+          puts ""
+        end
+      end
+    end
+  end
+end
+
+if ARGV.empty?
+  abort "Usage: dapi_term <input.dapi>"
+end
+
+dapi = Dapi.load(ARGV.first)
+write(dapi.endpoints)

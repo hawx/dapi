@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'redcarpet'
+require 'sass'
+require 'sinatra/base'
+require 'slim'
+
+require_relative '../lib/dapi'
+
+opts = {
+  no_intra_emphasis: true,
+  fenced_code_blocks: true,
+  disable_indented_code_blocks: true,
+  strikethrough: true,
+  space_after_headers: true
+}
+
+Markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, opts)
+
+class Writer
+  def initialize(views = {}, static = {})
+    @views = views
+    @static = static
+  end
+
+  def context(path)
+    Object.new.tap {|obj|
+      obj.singleton_class.send(:define_method, :dapi) { Dapi.load(path) }
+    }
+  end
+
+  def from_here(i)
+    File.expand_path File.join(File.dirname(__FILE__), i)
+  end
+
+  def write(path, dest)
+    ctx = context(path)
+
+    FileUtils.mkdir_p(dest)
+
+    @views.each do |output, input|
+      File.write(File.join(dest, output),
+                 Tilt.new(from_here(input)).render(ctx))
+    end
+
+    @static.each do |output, input|
+      File.write(File.join(dest, output),
+                 File.read(from_here(input)))
+    end
+  end
+end
+
+unless ARGV.size == 2
+  abort "Usage: dapi_static <file.dapi> <outdir>"
+end
+
+input, dest = ARGV
+
+views = {
+  'index.html' => '_assets/index.slim',
+  'styles.css' => '_assets/styles.sass'
+}
+
+static = {
+  'rainbow.min.js' => '_assets/rainbow.min.js'
+}
+
+writer = Writer.new(views, static)
+writer.write(input, dest)
+puts "Wrote to #{dest}"

@@ -1,0 +1,86 @@
+doctype html
+html
+  head
+    title dapi
+    link rel="stylesheet" href="styles.css"
+
+  body
+    header
+      h1 = dapi.title
+      div.description == Markdown.render dapi.description
+
+    ul.endpoints
+      - dapi.endpoints.each do |endpoint|
+        - endpoint.methods.each do |method|
+          li.endpoint.collapsed
+            header class=("verb-" + method.verb.downcase)
+              h1
+                span.verb = method.verb
+                span.url = endpoint.url
+
+            .content
+              div.description == Markdown.render method.description
+
+              - if method.request.body
+                h3 Body
+                pre
+                  code data-language="html" = method.request.body
+
+              - if method.request.parameters.any?
+                h3 Parameters
+                dl.parameters
+                  - method.request.parameters.each do |param|
+                    dt class=(param.opts[:optional] ? "optional" : "") = param.name
+                    dd == Markdown.render param.description
+
+              - if method.request.headers.any?
+                h3 Headers
+                dl.headers
+                  - method.request.headers.each do |header|
+                    dt class=(header.opts[:optional] ? "optional" : "") = header.name
+                    dd == Markdown.render header.description
+
+              - if method.request.example
+                h3 Example
+                pre
+                  code data-language="bash" = method.request.example
+
+              h2 Responses
+
+              ul.responses
+                - method.responses.each do |response|
+                  li.response
+                    span.code class=("code-" + response.code.to_s[0]) = response.code
+                    div.reason
+                      == Markdown.render response.reason
+
+                      - if response.headers.any?
+                        dl.headers
+                          - response.headers.each do |header|
+                            dt class=(header.opts[:optional] ? "optional" : "") = header.name
+                            dd == Markdown.render header.description
+
+                      - if response.body
+                        pre
+                          code data-language="html" = response.body
+
+      script src="rainbow.min.js"
+      script
+        | window.onload = function() {
+            var endpoints = document.querySelectorAll('.endpoint header h1');
+
+            console.log(endpoints)
+            for (var i = 0; i < endpoints.length; i++) {
+              var endpoint = endpoints[i];
+
+              endpoint.style.cursor = 'pointer';
+              endpoint.onclick = function () {
+                var classes = this.parentNode.parentNode.className;
+                if (classes.indexOf("collapsed") != -1) {
+                  this.parentNode.parentNode.className = classes.replace(/collapsed/, 'expanded');
+                } else {
+                  this.parentNode.parentNode.className = classes.replace(/expanded/, 'collapsed');
+                }
+              }
+            }
+          }
